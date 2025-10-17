@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const checkApiReady = setInterval(() => {
         // Verifica se a biblioteca window.ai e o objeto GoogleGenAI existem
-        if (window.ai && window.ai.GoogleGenAI) {
+        if (window.GoogleGenAI) {
             // A API está pronta!
             clearInterval(checkApiReady); // Para de sondar
 
@@ -107,3 +107,4 @@ async function gerarLegenda() {
         resultadoArea.value = `Falha na Missão Criativa. Erro: ${error.message}. Este pode ser um erro na Chave de API, um limite de uso excedido ou um bloqueio de rede.`;
     }
 }
+
