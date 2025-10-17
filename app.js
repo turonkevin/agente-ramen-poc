@@ -2,7 +2,7 @@
 // 1. DECLARAÇÕES INICIAIS (TOPO DO ARQUIVO)
 // ===================================================
 
-// Sua Chave de API (CONFERIDO)
+// Sua Chave de API 
 const apiKey = "AIzaSyAvCBl8AKuIBL02xIjnnTywvWrj0VfliMw"; 
 let ai; // Variável global para a API, inicializada abaixo
 
@@ -38,7 +38,7 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
-// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem com Intervalo para garantir o carregamento)
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Garantida)
 // ===================================================
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -47,22 +47,23 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // Verifica se a biblioteca window.ai e o objeto GoogleGenAI existem
-        if (window.GoogleGenAI) {
+        // CORREÇÃO FINAL: Verifica se a classe foi anexada pelo módulo do index.html
+        if (window.GoogleGenAI) { 
             // A API está pronta!
             clearInterval(checkApiReady); // Para de sondar
 
             try {
-                // Inicializa a variável 'ai'
-                ai = new window.ai.GoogleGenAI({ apiKey });
+                // Inicializa a variável 'ai' usando a classe global
+                ai = new window.GoogleGenAI({ apiKey }); 
                 console.log("Gemini API inicializada com sucesso!");
                 resultadoArea.value = "Assistente Criativo pronto para a missão! Preencha os campos e gere a sua legenda épica.";
             } catch (e) {
                 console.error("ERRO na inicialização direta da Gemini API:", e.message);
+                // Pode ser um problema com a chave, mas a API carregou.
                 resultadoArea.value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
             }
         } else {
-            // O script ainda não carregou
+            // O script ainda não carregou (Isto deve parar após alguns tiques)
             console.log("A aguardar o carregamento da Gemini API...");
         }
     }, 100); // Tenta verificar a cada 100ms
@@ -95,6 +96,7 @@ async function gerarLegenda() {
     try {
         const promptFinal = superPromptMestre(pratoInput, temaInput, contextoInput, ctaInput);
         
+        // Chamada de API para geração de conteúdo
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: [{ role: 'user', parts: [{ text: promptFinal }] }],
@@ -104,7 +106,7 @@ async function gerarLegenda() {
 
     } catch (error) {
         console.error("Falha na Missão Criativa:", error);
-        resultadoArea.value = `Falha na Missão Criativa. Erro: ${error.message}. Este pode ser um erro na Chave de API, um limite de uso excedido ou um bloqueio de rede.`;
+        // Informação clara de erro para o utilizador
+        resultadoArea.value = `Falha na Missão Criativa. Erro: ${error.message}. (Verifique a sua chave de API ou se atingiu o limite de uso).`;
     }
 }
-
