@@ -38,7 +38,7 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
-// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Garantida SDK Web)
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Garantida)
 // ===================================================
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // CORREÇÃO FINAL: Verifica a API no objeto 'window.ai' e a classe 'GoogleGenAI' (Padrão do SDK Web)
+        // CORREÇÃO: Verifica a API no objeto 'window.ai' e a classe 'GoogleGenAI' (Padrão UMD)
         if (window.ai && window.ai.GoogleGenAI) { 
             // A API está pronta!
             clearInterval(checkApiReady); // Para de sondar
@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Continua a sondar enquanto o script CDN não carrega
-            // Esta mensagem deve aparecer apenas por um breve momento
             console.log("A aguardar o carregamento da Gemini API...");
         }
     }, 100); // Tenta verificar a cada 100ms
