@@ -38,7 +38,7 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
-// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Módulo)
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem UMD)
 // ===================================================
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -46,14 +46,14 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // CORREÇÃO: Verifica o objeto que anexamos ao 'window' pelo script type="module"
-        if (window.GoogleGenAI) { 
+        // VERIFICAÇÃO FINAL: O script UMD deve criar window.ai.GoogleGenAI.
+        if (window.ai && window.ai.GoogleGenAI) { 
             // A API está pronta!
             clearInterval(checkApiReady); 
 
             try {
-                // Instancia usando a classe que veio do módulo
-                ai = new window.GoogleGenAI({ apiKey }); 
+                // Instancia o objeto
+                ai = new window.ai.GoogleGenAI({ apiKey }); 
                 
                 console.log("Gemini API inicializada com sucesso!");
                 resultadoArea.value = "Assistente Criativo pronto para a missão! Preencha os campos e gere a sua legenda épica.";
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultadoArea.value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
             }
         } else {
-            // Continua a sondar (o seu problema de loop)
+            // Continua o loop de espera
             console.log("A aguardar o carregamento da Gemini API...");
         }
     }, 100); 
