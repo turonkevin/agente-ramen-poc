@@ -2,39 +2,13 @@
 // 1. DECLARAÇÕES INICIAIS (TOPO DO ARQUIVO)
 // ===================================================
 
+// Sua Chave de API (CONFERIDO)
 const apiKey = "AIzaSyAvCBl8AKuIBL02xIjnnTywvWrj0VfliMw"; 
-let ai; // A variável 'ai' é declarada aqui, mas será inicializada depois
+let ai; // Variável global para a API, inicializada abaixo
 
 
 // ===================================================
-// 2. INICIALIZAÇÃO ROBUSTA DA API (Após o DOM estar pronto)
-// ===================================================
-document.addEventListener('DOMContentLoaded', function() {
-    // Usamos um pequeno atraso para dar tempo extra para o script do CDN carregar
-    setTimeout(() => {
-        if (window.ai && window.ai.GoogleGenAI) {
-            try {
-                ai = new window.ai.GoogleGenAI({ apiKey });
-                console.log("Gemini API inicializada com sucesso!");
-                // Limpa qualquer mensagem de erro inicial se a inicialização for bem-sucedida
-                const resultadoArea = document.getElementById('resultado');
-                if (resultadoArea.value.includes("Erro CRÍTICO")) {
-                    resultadoArea.value = ""; // Limpa a mensagem de erro
-                }
-            } catch (e) {
-                console.error("ERRO na inicialização direta da Gemini API:", e.message);
-                document.getElementById('resultado').value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
-            }
-        } else {
-            console.error("ERRO CRÍTICO: window.ai.GoogleGenAI ainda está indefinido após o DOM e o atraso. Verifique o link do CDN ou bloqueios.");
-            document.getElementById('resultado').value = "Erro CRÍTICO: A Inteligência Artificial não pôde ser carregada. Verifique a sua ligação à internet e a consola.";
-        }
-    }, 500); // Pequeno atraso de 500ms
-});
-
-
-// ===================================================
-// 3. FUNÇÃO: O SUPER-PROMPT MESTRE (DEFINIÇÃO)
+// 2. FUNÇÃO: O SUPER-PROMPT MESTRE (DEFINIÇÃO)
 // ===================================================
 const superPromptMestre = (prato, tema, contexto, cta) => {
     return `
@@ -64,6 +38,38 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem com Intervalo para garantir o carregamento)
+// ===================================================
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const resultadoArea = document.getElementById('resultado');
+    // Indica o estado de carregamento inicial
+    resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
+
+    const checkApiReady = setInterval(() => {
+        // Verifica se a biblioteca window.ai e o objeto GoogleGenAI existem
+        if (window.ai && window.ai.GoogleGenAI) {
+            // A API está pronta!
+            clearInterval(checkApiReady); // Para de sondar
+
+            try {
+                // Inicializa a variável 'ai'
+                ai = new window.ai.GoogleGenAI({ apiKey });
+                console.log("Gemini API inicializada com sucesso!");
+                resultadoArea.value = "Assistente Criativo pronto para a missão! Preencha os campos e gere a sua legenda épica.";
+            } catch (e) {
+                console.error("ERRO na inicialização direta da Gemini API:", e.message);
+                resultadoArea.value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
+            }
+        } else {
+            // O script ainda não carregou
+            console.log("A aguardar o carregamento da Gemini API...");
+        }
+    }, 100); // Tenta verificar a cada 100ms
+});
+
+
+// ===================================================
 // 4. FUNÇÃO PRINCIPAL: GERAR CONTEÚDO (CHAMADA PELO BOTÃO)
 // ===================================================
 async function gerarLegenda() {
@@ -78,10 +84,9 @@ async function gerarLegenda() {
         return;
     }
     
-    // Verifica se a API foi inicializada com sucesso antes de tentar usá-la
+    // Verifica se a API foi inicializada com sucesso
     if (!ai) {
         resultadoArea.value = "Erro: O Assistente Criativo não está pronto. Recarregue a página e verifique a sua ligação à internet.";
-        console.error("Tentativa de usar 'ai' antes da inicialização bem-sucedida.");
         return;
     }
 
