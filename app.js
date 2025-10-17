@@ -2,9 +2,40 @@
 // 1. DECLARAÇÕES INICIAIS (TOPO DO ARQUIVO)
 // ===================================================
 
+// Sua Chave de API 
 const apiKey = "AIzaSyAvCBl8AKuIBL02xIjnnTywvWrj0VfliMw"; 
-let ai; 
-// ... (RESTO DO CÓDIGO superPromptMestre INALTERADO) ...
+let ai; // Variável global para a API
+
+
+// ===================================================
+// 2. FUNÇÃO: O SUPER-PROMPT MESTRE (DEFINIÇÃO)
+// ===================================================
+const superPromptMestre = (prato, tema, contexto, cta) => {
+    return `
+        Instrução Mestra: 
+        Você é o Assistente Criativo de Conteúdo (A.C.C.) da Ignite Agent, especialista em branding para restaurantes de Anime/Mangá.
+        
+        Perfil da Marca: BugaRAMEN
+        Tom de Voz: Jovial, Épico, Imersivo, Acolhedor. Foco na JORNADA GASTRO-CULTURAL, DESCOBERTA, RITUAL e AVENTURA.
+        
+        Regras de Marca:
+        - NÃO USE: "delicioso", "barato", "melhor da cidade", "item lendário", "arma", "ataque", "batalha".
+        - USE palavras como: "Missão", "Jornada", "Capítulo", "Ritual", "Conforto", "Universo", "Magia", "Exploração", "Essência", "Autenticidade", "Saga".
+        - Utilize emojis temáticos: 🍜🔥⛩️🌸✨👻🎃.
+
+        Objetivo: Criar uma legenda autêntica, criativa e inovadora.
+
+        Com base nos seguintes inputs, gere a legenda:
+        1. PRATO/INGREDIENTE: ${prato}
+        2. TEMA/VIBE (Anime/Mangá): ${tema}
+        3. CONTEXTO/EVENTO: ${contexto} 
+        4. OBJETIVO (CTA): ${cta}
+        
+        Tarefa Final:
+        Crie uma legenda de Instagram com no máximo 4 frases curtas e envolventes. A legenda deve ser imediatamente seguida por uma lista de 5 a 7 hashtags relevantes.
+    `;
+};
+
 
 // ===================================================
 // 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Módulo)
@@ -15,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // CORREÇÃO FINAL: Verifica o objeto que anexamos no script type="module" do index.html
+        // CORREÇÃO: Verifica o objeto que anexamos ao 'window' pelo script type="module"
         if (window.GoogleGenAI) { 
             // A API está pronta!
             clearInterval(checkApiReady); 
@@ -31,17 +62,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultadoArea.value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
             }
         } else {
+            // Continua a sondar (o seu problema de loop)
             console.log("A aguardar o carregamento da Gemini API...");
         }
     }, 100); 
 });
 
+
 // ===================================================
 // 4. FUNÇÃO PRINCIPAL: GERAR CONTEÚDO (CHAMADA PELO BOTÃO)
 // ===================================================
-// ... (RESTO DA FUNÇÃO gerarLegenda INALTERADO) ...
 async function gerarLegenda() {
-    // ... (restante da função)
+    const pratoInput = document.getElementById('prato').value;
+    const temaInput = document.getElementById('tema').value;
+    const contextoInput = document.getElementById('contexto').value;
+    const ctaInput = document.getElementById('cta').value;
+    const resultadoArea = document.getElementById('resultado');
+
+    if (!pratoInput || !ctaInput) {
+        resultadoArea.value = "Os campos 'Prato/Ingrediente' e 'Objetivo (CTA)' são essenciais para iniciar a vossa missão criativa.";
+        return;
+    }
+    
+    // Verifica se a API foi inicializada com sucesso
+    if (!ai) {
+        resultadoArea.value = "Erro: O Assistente Criativo não está pronto. Recarregue a página e verifique a sua ligação à internet.";
+        return;
+    }
+
+    resultadoArea.value = "A preparar o Super-Prompt... O Assistente Criativo está a forjar a sua próxima obra... ✍️✨";
+
     try {
         const promptFinal = superPromptMestre(pratoInput, temaInput, contextoInput, ctaInput);
         
@@ -54,6 +104,7 @@ async function gerarLegenda() {
         resultadoArea.value = response.text.trim();
 
     } catch (error) {
-        // ... (restante do catch)
+        console.error("Falha na Missão Criativa:", error);
+        resultadoArea.value = `Falha na Missão Criativa. Erro: ${error.message}. (Verifique a chave de API ou se excedeu os limites).`;
     }
 }
