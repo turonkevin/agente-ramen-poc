@@ -5,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agente Marketing Ramen Mestre (A.M.R.M.)</title>
     <style>
-        /* CSS SIMPLES PARA LEGIBILIDADE */
-        body { font-family: sans-serif; padding: 20px; }
-        input[type="text"], select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #ff5722; color: white; padding: 10px 15px; border: none; cursor: pointer; width: 100%; font-size: 1.1em; }
-        button:hover { opacity: 0.9; }
-        h1 { color: #ff5722; }
+        body { font-family: sans-serif; padding: 20px; background-color: #f7f7f7; }
+        input[type="text"], select, textarea { width: 100%; padding: 10px; margin: 5px 0 15px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box; border-radius: 4px; }
+        button { 
+            background-color: #ff5722; 
+            color: white; 
+            padding: 12px 15px; 
+            border: none; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 1.1em; 
+            border-radius: 4px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover { background-color: #e64a19; }
+        h1 { color: #ff5722; border-bottom: 2px solid #ff5722; padding-bottom: 5px; }
+        h3 { color: #333; }
+        textarea { resize: vertical; background-color: #fff; border: 1px solid #ff5722; }
     </style>
 </head>
 <body>
@@ -42,7 +54,16 @@
     <h2>Output do A.M.R.M. (Revisar e Publicar):</h2>
     <textarea id="resultado" rows="10" cols="60" readonly></textarea>
     
-    <script src="https://cdn.jsdelivr.net/npm/@google/genai@0.1.0/umd/index.js"></script>
+    <script type="module">
+        // Importa a classe GoogleGenAI diretamente do CDN (ESM)
+        import { GoogleGenAI } from 'https://cdn.jsdelivr.net/npm/@google/genai@0.1.0/esm/index.js';
+        
+        // Anexa a classe ao objeto global 'window' para que o app.js possa encontrá-la (o ponto de verificação)
+        window.GoogleGenAI = GoogleGenAI;
+
+        // NOTA: Se o seu navegador não suportar 'type="module"', a linha acima falhará silenciosamente.
+        // Mas para ambientes modernos (como o Netlify/Chrome), isto é a solução mais robusta.
+    </script>
     
     <script defer src="app.js"></script>
 </body>
