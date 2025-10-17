@@ -2,7 +2,6 @@
 // 1. DECLARAÇÕES INICIAIS (TOPO DO ARQUIVO)
 // ===================================================
 
-// Sua Chave de API 
 const apiKey = "AIzaSyAvCBl8AKuIBL02xIjnnTywvWrj0VfliMw"; 
 let ai; // Variável global para a API
 
@@ -38,7 +37,7 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
-// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem UMD)
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Nova Sintaxe SDK)
 // ===================================================
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -46,14 +45,14 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // VERIFICAÇÃO FINAL: O script UMD deve criar window.ai.GoogleGenAI.
-        if (window.ai && window.ai.GoogleGenAI) { 
-            // A API está pronta!
+        // CORREÇÃO CRÍTICA: O novo CDN cria o objeto "googleGenerativeAI" globalmente.
+        if (window.googleGenerativeAI) { 
+            
             clearInterval(checkApiReady); 
 
             try {
-                // Instancia o objeto
-                ai = new window.ai.GoogleGenAI({ apiKey }); 
+                // Instancia o objeto usando a nova classe
+                ai = new window.googleGenerativeAI.GoogleGenerativeAI(apiKey); 
                 
                 console.log("Gemini API inicializada com sucesso!");
                 resultadoArea.value = "Assistente Criativo pronto para a missão! Preencha os campos e gere a sua legenda épica.";
@@ -95,11 +94,10 @@ async function gerarLegenda() {
     try {
         const promptFinal = superPromptMestre(pratoInput, temaInput, contextoInput, ctaInput);
         
-        // Chamada de API para geração de conteúdo (Sintaxe para GoogleGenAI)
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: [{ role: 'user', parts: [{ text: promptFinal }] }],
-        });
+        // CORREÇÃO: Usamos o método getGenerativeModel do novo SDK
+        const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+        const response = await model.generateContent(promptFinal);
 
         resultadoArea.value = response.text.trim();
 
