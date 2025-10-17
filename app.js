@@ -3,8 +3,9 @@
 // ===================================================
 
 // Sua Chave de API 
+// ATENÇÃO: A GSI (nova rota) exige que você use o API Key gerado no Google AI Studio.
 const apiKey = "AIzaSyAvCBl8AKuIBL02xIjnnTywvWrj0VfliMw"; 
-let ai; // Variável global para a API, inicializada abaixo
+let ai; // Variável global para a API, agora será uma instância do modelo
 
 
 // ===================================================
@@ -38,7 +39,7 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
-// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Garantida)
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem GSI/GIS)
 // ===================================================
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -47,18 +48,22 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // CORREÇÃO: Verifica a API no objeto 'window.ai' e a classe 'GoogleGenAI' (Padrão UMD)
-        if (window.ai && window.ai.GoogleGenAI) { 
+        // MUDANÇA CRÍTICA: Agora verifica o objeto 'google.genai' (GSI/GIS)
+        if (window.google && window.google.genai) { 
             // A API está pronta!
             clearInterval(checkApiReady); // Para de sondar
 
             try {
-                // Inicializa a variável 'ai'
-                ai = new window.ai.GoogleGenAI({ apiKey }); 
+                // Instancia o modelo diretamente via google.genai (nova sintaxe GIS/GSI)
+                ai = new window.google.genai.GenerativeModel({
+                    apiKey: apiKey,
+                    model: 'gemini-2.5-flash', // Modelo definido na inicialização
+                }); 
+                
                 console.log("Gemini API inicializada com sucesso!");
                 resultadoArea.value = "Assistente Criativo pronto para a missão! Preencha os campos e gere a sua legenda épica.";
             } catch (e) {
-                console.error("ERRO na inicialização direta da Gemini API:", e.message);
+                console.error("ERRO na inicialização da Gemini API (GSI/GIS):", e.message);
                 resultadoArea.value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
             }
         } else {
@@ -95,11 +100,8 @@ async function gerarLegenda() {
     try {
         const promptFinal = superPromptMestre(pratoInput, temaInput, contextoInput, ctaInput);
         
-        // Chamada de API para geração de conteúdo
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: [{ role: 'user', parts: [{ text: promptFinal }] }],
-        });
+        // Chamada de API para geração de conteúdo (Sintaxe para instância de modelo GSI)
+        const response = await ai.generateContent(promptFinal);
 
         resultadoArea.value = response.text.trim();
 
