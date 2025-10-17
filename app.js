@@ -38,7 +38,7 @@ const superPromptMestre = (prato, tema, contexto, cta) => {
 
 
 // ===================================================
-// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Garantida)
+// 3. INICIALIZAÇÃO ROBUSTA DA API (Sondagem Garantida UMD)
 // ===================================================
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -47,23 +47,22 @@ document.addEventListener('DOMContentLoaded', function() {
     resultadoArea.value = "A carregar o Assistente Criativo... Aguarde um momento. ⏱️";
 
     const checkApiReady = setInterval(() => {
-        // CORREÇÃO FINAL: Verifica se a classe foi anexada pelo módulo do index.html
-        if (window.GoogleGenAI) { 
+        // CORREÇÃO FINAL: Verifica a API no objeto 'window.ai' e a classe 'GoogleGenAI' (Padrão UMD)
+        if (window.ai && window.ai.GoogleGenAI) { 
             // A API está pronta!
             clearInterval(checkApiReady); // Para de sondar
 
             try {
-                // Inicializa a variável 'ai' usando a classe global
-                ai = new window.GoogleGenAI({ apiKey }); 
+                // Inicializa a variável 'ai'
+                ai = new window.ai.GoogleGenAI({ apiKey }); 
                 console.log("Gemini API inicializada com sucesso!");
                 resultadoArea.value = "Assistente Criativo pronto para a missão! Preencha os campos e gere a sua legenda épica.";
             } catch (e) {
                 console.error("ERRO na inicialização direta da Gemini API:", e.message);
-                // Pode ser um problema com a chave, mas a API carregou.
                 resultadoArea.value = "Erro CRÍTICO: Não foi possível inicializar a API. Verifique a chave e a consola.";
             }
         } else {
-            // O script ainda não carregou (Isto deve parar após alguns tiques)
+            // Continua a sondar enquanto o script CDN não carrega
             console.log("A aguardar o carregamento da Gemini API...");
         }
     }, 100); // Tenta verificar a cada 100ms
@@ -106,7 +105,6 @@ async function gerarLegenda() {
 
     } catch (error) {
         console.error("Falha na Missão Criativa:", error);
-        // Informação clara de erro para o utilizador
-        resultadoArea.value = `Falha na Missão Criativa. Erro: ${error.message}. (Verifique a sua chave de API ou se atingiu o limite de uso).`;
+        resultadoArea.value = `Falha na Missão Criativa. Erro: ${error.message}. (Verifique a chave de API ou se excedeu os limites).`;
     }
 }
