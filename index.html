@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Marketing Ramen Mestre (A.M.R.M.)</title>
+    <style>
+        /* CSS SIMPLES PARA LEGIBILIDADE */
+        body { font-family: sans-serif; padding: 20px; }
+        input[type="text"], select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #ff5722; color: white; padding: 10px 15px; border: none; cursor: pointer; width: 100%; font-size: 1.1em; }
+        button:hover { opacity: 0.9; }
+        h1 { color: #ff5722; }
+    </style>
+</head>
+<body>
+    <h1>Agente Marketing Ramen Mestre (A.M.R.M.)</h1>
+    <p>Crie legendas de Instagram imersivas e autênticas em segundos. O seu parceiro de branding criativo.</p>
+    
+    <label for="restaurante">Marca/Cliente:</label>
+    <select id="restaurante">
+        <option value="bugaramen">BugaRAMEN (Geek/Épico)</option>
+    </select>
+    <br><br>
+
+    <h3>Painel de Controlo Criativo</h3>
+    
+    <label for="prato">1. Prato/Ingrediente *</label>
+    <input type="text" id="prato" placeholder="Ex: Tonkotsu Shoyu Ramen">
+    
+    <label for="tema">2. Tema/Vibe (Anime/Mangá):</label>
+    <input type="text" id="tema" placeholder="Ex: Jornada de Samurais ou Ritual de Conforto">
+    
+    <label for="contexto">3. Contexto/Evento:</label>
+    <input type="text" id="contexto" placeholder="Ex: Halloween, Happy Hour, Chuva ou Lançamento de Manga">
+    
+    <label for="cta">4. Objetivo (CTA) *</label>
+    <input type="text" id="cta" placeholder="Ex: Reservar uma Mesa ou Pedir Takeaway">
+    
+    <button onclick="gerarLegenda()">⚡ Gerar Legenda Épica</button>
+
+    <h2>Output do A.M.R.M. (Revisar e Publicar):</h2>
+    <textarea id="resultado" rows="10" cols="60" readonly></textarea>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@google/genai@0.1.0/umd/index.js"></script>
+    
+    <script defer src="app.js"></script>
+</body>
+</html>
